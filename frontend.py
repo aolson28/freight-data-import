@@ -17,7 +17,7 @@ class Frontend:
             if file_type == "csv":
                 df = pd.read_csv(uploaded_file)
             elif file_type == "xlsx":
-                df = pd.read_excel(uploaded_file, sheet_name="SMT Load Log 2025")
+                df = pd.read_excel(uploaded_file, sheet_name="SMT LOAD LOG 2025")
             else:
                 st.error("Unsupported file format!")
                 return

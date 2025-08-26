@@ -6,12 +6,13 @@ class Import_File():
 
     def clean_file(self):
         #Read and open the master logistics file
-        master_file = pd.read_excel(self.file, sheet_name="SMT Load Log 2025")
+        master_file = pd.read_excel(self.file, sheet_name="SMT LOAD LOG 2025")
         #Drop the duplicated Carrier column
         master_file = master_file.drop(columns=["Carrier"])  
         import_file_with_all_columns = master_file.rename(
             columns = {
-                "Control #": "Control",
+                "Control #": "Control",                
+                "Release": "Reference",
                 "Pick/Ref #": "Trailer",
                 " Rate": "Freight Rate", #Yes, there is supposed to be a space before 'Rate'
                 "Carrier Code": "Carrier", 
@@ -48,7 +49,7 @@ class Import_File():
         import_file_with_all_columns["Date"] = import_file_with_all_columns["MR Date"]
 
         #Narrows it down to which columns we want to keep and clears out the columns that are empty. For pd.to_numeric, it clears out anything that is not a number
-        import_file = import_file_with_all_columns[["Control", "Date", "Trailer", "Freight Rate", "Carrier", "MR Date", "MS Appointment Date", "MS Appointment Earliest Time"]]
+        import_file = import_file_with_all_columns[["Control", "Date", "Trailer", "Freight Rate", "Carrier", "MR Date", "MS Appointment Date", "MS Appointment Earliest Time", "Reference"]]
         import_file = import_file[pd.to_numeric(import_file['Control'], errors='coerce').notna()]
         
         #Drop the empty rows for each of the listed columns
@@ -58,6 +59,7 @@ class Import_File():
         cleaned_import_file["Mr Status"] = 'Status MR'
         cleaned_import_file["MS Status"] = 'Status MS'
         cleaned_import_file["MR Status"] = 'Status'
+        #cleaned_import_file["Release"] = 'Release'
 
         for column in column_list:
             cleaned_import_file[column] = None
@@ -68,6 +70,7 @@ class Import_File():
             "Trailer",
             "Freight Rate",
             "MR Status",
+            "Reference",
             "Carrier",
             "MR Date",
             "MR Earliest Time",

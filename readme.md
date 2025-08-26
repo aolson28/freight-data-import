@@ -1,0 +1,1 @@
+run for debugging python -m streamlit run C:\Users\aolson\source\Freight-Data-import\main.py
