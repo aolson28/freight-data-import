@@ -49,8 +49,9 @@ class Import_File():
         import_file_with_all_columns["Date"] = import_file_with_all_columns["MR Date"]
 
         #Replace Reference if Consumer is ARCONIC
-        if import_file_with_all_columns["Consumer"] == "ARCONIC":
-            import_file_with_all_columns["Reference"] = import_file_with_all_columns["Mill PO#"]
+        mask = import_file_with_all_columns["Consumer"] == "ARCONIC"
+        import_file_with_all_columns.loc[mask, "Reference"] = import_file_with_all_columns.loc[mask, "Mill PO#"]
+
 
         #Narrows it down to which columns we want to keep and clears out the columns that are empty. For pd.to_numeric, it clears out anything that is not a number
         import_file = import_file_with_all_columns[["Control", "Date", "Trailer", "Freight Rate", "Carrier", "MR Date", "MS Appointment Date", "MS Appointment Earliest Time", "Reference"]]
