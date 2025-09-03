@@ -48,6 +48,10 @@ class Import_File():
         #Copied MR Date's data to the "Date" column
         import_file_with_all_columns["Date"] = import_file_with_all_columns["MR Date"]
 
+        #Replace Reference if Consumer is ARCONIC
+        if import_file_with_all_columns["Consumer"] == "ARCONIC":
+            import_file_with_all_columns["Reference"] = import_file_with_all_columns["Mill PO#"]
+
         #Narrows it down to which columns we want to keep and clears out the columns that are empty. For pd.to_numeric, it clears out anything that is not a number
         import_file = import_file_with_all_columns[["Control", "Date", "Trailer", "Freight Rate", "Carrier", "MR Date", "MS Appointment Date", "MS Appointment Earliest Time", "Reference"]]
         import_file = import_file[pd.to_numeric(import_file['Control'], errors='coerce').notna()]
@@ -111,5 +115,7 @@ class Import_File():
         cleaned_import_file["Date"] = cleaned_import_file['Date'].dt.strftime('%m/%d/%Y')
         cleaned_import_file["MR Date"] = cleaned_import_file['MR Date'].dt.strftime('%m/%d/%Y')
         cleaned_import_file["MS Appointment Date"] = cleaned_import_file['MS Appointment Date'].dt.strftime('%m/%d/%Y')
+
+
 
         return cleaned_import_file
