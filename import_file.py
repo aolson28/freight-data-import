@@ -1,4 +1,7 @@
 import pandas as pd
+import warnings
+import streamlit as st
+warnings.simplefilter("ignore", UserWarning)
 
 class Import_File():
     def __init__(self, file):
@@ -7,6 +10,12 @@ class Import_File():
     def clean_file(self):
         #Read and open the master logistics file
         master_file = pd.read_excel(self.file, sheet_name="SMT LOAD LOG 2025")
+
+
+        
+        for col in master_file.select_dtypes(include="object").columns:
+            master_file[col] = master_file[col].astype(str)
+
         #Drop the duplicated Carrier column
         master_file = master_file.drop(columns=["Carrier"])  
         import_file_with_all_columns = master_file.rename(
@@ -47,9 +56,10 @@ class Import_File():
         
         #Copied MR Date's data to the "Date" column
         import_file_with_all_columns["Date"] = import_file_with_all_columns["MR Date"]
-
+        st.write("columns: ", import_file_with_all_columns.columns.tolist())
         #Replace Reference if Consumer is ARCONIC
         mask = import_file_with_all_columns["Consumer"] == "ARCONIC"
+        st.write("count of masked items",mask.sum())
         import_file_with_all_columns.loc[mask, "Reference"] = import_file_with_all_columns.loc[mask, "Mill PO#"]
 
 
@@ -58,12 +68,14 @@ class Import_File():
         import_file = import_file[pd.to_numeric(import_file['Control'], errors='coerce').notna()]
         
         #Drop the empty rows for each of the listed columns
-        cleaned_import_file = import_file.dropna(subset=["Control", "Date", "MR Date"], how='any')                                                       # -> datetime.time
+        cleaned_import_file = import_file.dropna(subset=["Control", "Date", "MR Date"], how='any').copy()                                                       # -> datetime.time
         
         #Filled these columns with placeholder data
-        cleaned_import_file["Mr Status"] = 'Status MR'
-        cleaned_import_file["MS Status"] = 'Status MS'
-        cleaned_import_file["MR Status"] = 'Status'
+        
+        cleaned_import_file.loc[:, "Mr Status"] = "Status MR"
+        cleaned_import_file.loc[:, "MS Status"] = "Status MS"
+        cleaned_import_file.loc[:, "MR Status"] = "Status"
+
         #cleaned_import_file["Release"] = 'Release'
 
         for column in column_list:
@@ -111,8 +123,8 @@ class Import_File():
         cleaned_import_file = cleaned_import_file[correct_dates]
 
         #Converted all dates to datetime format
-        pd.to_datetime(cleaned_import_file["Date"], errors='coerce')
-        pd.to_datetime(cleaned_import_file["MR Date"], errors='coerce')
+        cleaned_import_file["Date"] = pd.to_datetime(cleaned_import_file["Date"], errors='coerce')
+        cleaned_import_file["MR Date"] = pd.to_datetime(cleaned_import_file["MR Date"], errors='coerce')
         cleaned_import_file["Date"] = cleaned_import_file['Date'].dt.strftime('%m/%d/%Y')
         cleaned_import_file["MR Date"] = cleaned_import_file['MR Date'].dt.strftime('%m/%d/%Y')
         cleaned_import_file["MS Appointment Date"] = cleaned_import_file['MS Appointment Date'].dt.strftime('%m/%d/%Y')
