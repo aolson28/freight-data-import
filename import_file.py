@@ -58,7 +58,10 @@ class Import_File():
         import_file_with_all_columns["Date"] = import_file_with_all_columns["MR Date"]
         # st.write("columns: ", import_file_with_all_columns.columns.tolist())
         #Replace Reference if Consumer is ARCONIC
-        mask = import_file_with_all_columns["Consumer"] == "ARCONIC"
+        mask = (
+            (import_file_with_all_columns["Consumer"] == "ARCONIC") &
+            (import_file_with_all_columns["Mill PO#"].astype(str).str[0] == "6")
+        )
         # st.write("count of masked items",mask.sum())
         import_file_with_all_columns.loc[mask, "Reference"] = import_file_with_all_columns.loc[mask, "Mill PO#"]
 
