@@ -13,8 +13,8 @@ class Import_File():
 
 
         
-        for col in master_file.select_dtypes(include="object").columns:
-            master_file[col] = master_file[col].astype(str)
+        # for col in master_file.select_dtypes(include="object").columns:
+        #     master_file[col] = master_file[col].astype(str)
 
         #Drop the duplicated Carrier column
         master_file = master_file.drop(columns=["Carrier"])  
@@ -56,10 +56,10 @@ class Import_File():
         
         #Copied MR Date's data to the "Date" column
         import_file_with_all_columns["Date"] = import_file_with_all_columns["MR Date"]
-        st.write("columns: ", import_file_with_all_columns.columns.tolist())
+        # st.write("columns: ", import_file_with_all_columns.columns.tolist())
         #Replace Reference if Consumer is ARCONIC
         mask = import_file_with_all_columns["Consumer"] == "ARCONIC"
-        st.write("count of masked items",mask.sum())
+        # st.write("count of masked items",mask.sum())
         import_file_with_all_columns.loc[mask, "Reference"] = import_file_with_all_columns.loc[mask, "Mill PO#"]
 
 
