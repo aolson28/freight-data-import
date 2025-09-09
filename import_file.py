@@ -56,7 +56,7 @@ class Import_File():
         
         #Copied MR Date's data to the "Date" column
         import_file_with_all_columns["Date"] = import_file_with_all_columns["MR Date"]
-        # st.write("columns: ", import_file_with_all_columns.columns.tolist())
+        st.write("columns: ", import_file_with_all_columns.columns.tolist())
         #Replace Reference if Consumer is ARCONIC
         mask = import_file_with_all_columns["Consumer"] == "ARCONIC"
         # st.write("count of masked items",mask.sum())
