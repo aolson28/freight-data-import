@@ -58,12 +58,39 @@ class Import_File():
         import_file_with_all_columns["Date"] = import_file_with_all_columns["MR Date"]
         # st.write("columns: ", import_file_with_all_columns.columns.tolist())
         #Replace Reference if Consumer is ARCONIC
-        mask = (
-            (import_file_with_all_columns["Consumer"] == "ARCONIC") &
-            (import_file_with_all_columns["Mill PO#"].astype(str).str[0] == "6")
+        mask1 = (
+            (
+                (import_file_with_all_columns["Consumer"] == "ARCONIC") &
+                (import_file_with_all_columns["Mill PO#"].astype(str).str[0] == "6")
+            )
+            |
+            (
+                (import_file_with_all_columns["Consumer"] == "OHA") &
+                (import_file_with_all_columns["Mill PO#"].astype(str).str[0] == "5")
+            )
+            |
+            (
+                (import_file_with_all_columns["Consumer"] == "REAL ALLOY") &
+                (import_file_with_all_columns["Mill PO#"].astype(str).str[0] == "6")
+            )
         )
         # st.write("count of masked items",mask.sum())
-        import_file_with_all_columns.loc[mask, "Reference"] = import_file_with_all_columns.loc[mask, "Mill PO#"]
+        import_file_with_all_columns.loc[mask1, "Reference"] = import_file_with_all_columns.loc[mask1, "Mill PO#"]
+
+        #Replace Reference if Consumer is ARCONIC
+        mask2 = (
+            (
+                (import_file_with_all_columns["Consumer"] == "OHA") &
+                (import_file_with_all_columns["Pick/Ref #"].astype(str).str[0] == "5")
+            )
+            |
+            (
+                (import_file_with_all_columns["Consumer"] == "REAL ALLOY") &
+                (import_file_with_all_columns["Pick/Ref #"].astype(str).str[0] == "6")
+            )
+        )
+        # st.write("count of masked items",mask.sum())
+        import_file_with_all_columns.loc[mask2, "Reference"] = import_file_with_all_columns.loc[mask2, "Pick/Ref #"]
 
 
         #Narrows it down to which columns we want to keep and clears out the columns that are empty. For pd.to_numeric, it clears out anything that is not a number
