@@ -57,7 +57,14 @@ class Import_File():
         #Copied MR Date's data to the "Date" column
         import_file_with_all_columns["Date"] = import_file_with_all_columns["MR Date"]
         # st.write("columns: ", import_file_with_all_columns.columns.tolist())
-        #Replace Reference if Consumer is ARCONIC
+
+        import_file_with_all_columns["Reference"] = import_file_with_all_columns["Reference"].apply(
+            lambda x: str(x).strip() if pd.notnull(x) else ""
+        )
+
+
+
+        # Replace Reference if Consumer is ARCONIC
         mask1 = (
             (
                 (import_file_with_all_columns["Consumer"] == "ARCONIC") &
@@ -81,6 +88,10 @@ class Import_File():
         )
         # st.write("count of masked items",mask.sum())
         import_file_with_all_columns.loc[mask1, "Reference"] = import_file_with_all_columns.loc[mask1, "Mill PO#"]
+        # Ensure Trailer column is string or None
+        # import_file_with_all_columns["Trailer"] = import_file_with_all_columns["Trailer"].apply(
+        #     lambda x: str(x) if pd.notnull(x) else None
+        # )
 
         #Replace Reference if Consumer is ARCONIC
         mask2 = (
@@ -102,11 +113,35 @@ class Import_File():
         # st.write("count of masked items",mask.sum())
         import_file_with_all_columns.loc[mask2, "Reference"] = import_file_with_all_columns.loc[mask2, "Trailer"]
 
-        mask3 = (import_file_with_all_columns["Trailer"].astype(str).str[:2] == "SN")
-        
-        # st.write("count of masked items",mask.sum())
-        import_file_with_all_columns.loc[mask3, "Trailer"] = None
+        # mask3 = import_file_with_all_columns["Trailer"].fillna("").astype(str).str.upper().str.startswith("SN")
+        # mask3 = import_file_with_all_columns["Trailer"].astype(str).str[:2] == "SN"
+        # import_file_with_all_columns.loc[mask3, "Trailer"] = ""
 
+                
+        
+        # import_file_with_all_columns["Trailer"] = import_file_with_all_columns["Trailer"].apply(
+        #     lambda x: str(x).strip() if isinstance(x, str) else x
+        # )
+
+        import_file_with_all_columns["Trailer"] = import_file_with_all_columns["Trailer"].astype(str).str.strip()
+
+
+        # import_file_with_all_columns.loc[
+        #     import_file_with_all_columns["Trailer"].str.upper().str.startswith("SN"),
+        #     "Trailer"
+        # ] = None
+
+
+        mask4 = import_file_with_all_columns["Trailer"].str.upper().str.startswith("SN", na=False)
+
+        # Perform the replacement, which will work without issues
+        import_file_with_all_columns.loc[mask4, "Trailer"] = None
+
+        import_file_with_all_columns['Trailer'] = import_file_with_all_columns['Trailer'].replace('nan', None)
+        import_file_with_all_columns['Trailer'] = import_file_with_all_columns['Trailer'].replace('', None)
+
+        # mask3 = import_file_with_all_columns["Trailer"].astype(str) == ""
+        # import_file_with_all_columns.loc[mask3, "Trailer"] = None
 
         #Narrows it down to which columns we want to keep and clears out the columns that are empty. For pd.to_numeric, it clears out anything that is not a number
         import_file = import_file_with_all_columns[["Control", "Date", "Trailer", "Freight Rate", "Carrier", "MR Date", "MS Appointment Date", "MS Appointment Earliest Time", "Reference"]]
