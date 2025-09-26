@@ -145,8 +145,20 @@ class Import_File():
 
         #Narrows it down to which columns we want to keep and clears out the columns that are empty. For pd.to_numeric, it clears out anything that is not a number
         import_file = import_file_with_all_columns[["Control", "Date", "Trailer", "Freight Rate", "Carrier", "MR Date", "MS Appointment Date", "MS Appointment Earliest Time", "Reference"]]
-        import_file = import_file[pd.to_numeric(import_file['Control'], errors='coerce').notna()]
+        # import_file = import_file[pd.to_numeric(import_file['Control'], errors='coerce').notna()]
         
+        
+        import_file['Control'] = import_file['Control'].astype(str).str.strip()
+
+        # Remove rows where Control is 'nan', empty, or just whitespace
+        import_file = import_file[
+            import_file['Control'].notna() &
+            (import_file['Control'].str.lower() != 'nan') &
+            (import_file['Control'] != '')
+        ]
+
+
+
         #Drop the empty rows for each of the listed columns
         cleaned_import_file = import_file.dropna(subset=["Control", "Date", "MR Date"], how='any').copy()                                                       # -> datetime.time
         
