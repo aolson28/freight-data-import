@@ -82,7 +82,7 @@ class Import_File():
             )            
             |
             (
-                (import_file_with_all_columns["Consumer"] == "KAISER WARRICK") &
+                (import_file_with_all_columns["Consumer"].str.contains("kaiser", case=False, na=False)) &
                 (import_file_with_all_columns["Mill PO#"].astype(str).str[:2] == "52")
             )
         )
@@ -106,7 +106,7 @@ class Import_File():
             )
             |
             (
-                (import_file_with_all_columns["Consumer"] == "KAISER WARRICK") &
+                (import_file_with_all_columns["Consumer"].str.contains("kaiser", case=False, na=False)) &
                 (import_file_with_all_columns["Trailer"].astype(str).str[:2] == "52")
             )
         )
