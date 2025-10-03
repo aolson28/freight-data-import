@@ -168,11 +168,7 @@ class Import_File():
         cleaned_import_file.loc[:, "MS Status"] = "Status MS"
         cleaned_import_file.loc[:, "MR Status"] = "Status"
 
-        mask5 = (
-            (cleaned_import_file["MR Date"].notna()) |
-            (cleaned_import_file["MR Date"] != '') |
-            (cleaned_import_file["MR Date"].str.lower() != 'nan')
-        )
+        mask5 = (cleaned_import_file["MR Date"].notna())
         cleaned_import_file.loc[mask5, "MR Status"] = "Scheduled"
         #cleaned_import_file["Release"] = 'Release'
 
