@@ -27,7 +27,8 @@ class Import_File():
                 "Carrier Code": "Carrier", 
                 "Pick Date": "MR Date",
                 "Del Date": "MS Appointment Date",
-                "Del Time": "MS Appointment Earliest Time"
+                "Del Time": "MS Appointment Earliest Time",
+                "Pick/Ref #": "Pick/Ref #"
             }
         )
         column_list = [
