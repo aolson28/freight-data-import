@@ -154,10 +154,11 @@ class Import_File():
         # import_file_with_all_columns.loc[mask3, "Trailer"] = None
 
         #Narrows it down to which columns we want to keep and clears out the columns that are empty. For pd.to_numeric, it clears out anything that is not a number
-        import_file = import_file_with_all_columns[["Control", "Date", "Trailer", "Freight Rate", "Carrier", "MR Date", "MS Appointment Date", "MS Appointment Earliest Time", "Reference"]]
+        import_file = import_file_with_all_columns[["Control", "Date", "Trailer", "Freight Rate", "Carrier", "MR Date", "MS Appointment Date", "MS Appointment Earliest Time", "Reference", "Pick/Ref #"]]
         # import_file = import_file[pd.to_numeric(import_file['Control'], errors='coerce').notna()]
         
         
+        import_file = import_file.copy() 
         import_file['Control'] = import_file['Control'].astype(str).str.strip()
 
         # Remove rows where Control is 'nan', empty, or just whitespace
@@ -165,7 +166,7 @@ class Import_File():
             import_file['Control'].notna() &
             (import_file['Control'].str.lower() != 'nan') &
             (import_file['Control'] != '')
-        ]
+]       
 
 
 
@@ -234,6 +235,10 @@ class Import_File():
         cleaned_import_file["MR Date"] = cleaned_import_file['MR Date'].dt.strftime('%m/%d/%Y')
         cleaned_import_file["MS Appointment Date"] = cleaned_import_file['MS Appointment Date'].dt.strftime('%m/%d/%Y')
 
-
+        # Ensure consistent types for all object columns
+        for col in cleaned_import_file.select_dtypes(include=['object']).columns:
+            cleaned_import_file[col] = cleaned_import_file[col].astype(str)
+            cleaned_import_file[col] = cleaned_import_file[col].replace('nan', None)
+            cleaned_import_file[col] = cleaned_import_file[col].replace('None', None)
 
         return cleaned_import_file
