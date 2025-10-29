@@ -22,7 +22,7 @@ class Import_File():
             columns = {
                 "Control #": "Control",                
                 "Release": "Reference",
-                "Pick/Ref #": "Trailer",
+                "Trailer #": "Trailer",
                 " Rate": "Freight Rate", #Yes, there is supposed to be a space before 'Rate'
                 "Carrier Code": "Carrier", 
                 "Pick Date": "MR Date",
@@ -97,21 +97,21 @@ class Import_File():
         mask2 = (
             (
                 (import_file_with_all_columns["Consumer"] == "OHA") &
-                (import_file_with_all_columns["Trailer"].astype(str).str[0] == "5")
+                (import_file_with_all_columns["Pick/Ref #"].astype(str).str[0] == "5")
             )
             |
             (
                 (import_file_with_all_columns["Consumer"] == "REAL ALLOY") &
-                (import_file_with_all_columns["Trailer"].astype(str).str[:2] == "66")
+                (import_file_with_all_columns["Pick/Ref #"].astype(str).str[:2] == "66")
             )
             |
             (
                 (import_file_with_all_columns["Consumer"].str.contains("kaiser", case=False, na=False)) &
-                (import_file_with_all_columns["Trailer"].astype(str).str[:2] == "52")
+                (import_file_with_all_columns["Pick/Ref #"].astype(str).str[:2] == "52")
             )
         )
         # st.write("count of masked items",mask.sum())
-        import_file_with_all_columns.loc[mask2, "Reference"] = import_file_with_all_columns.loc[mask2, "Trailer"]
+        import_file_with_all_columns.loc[mask2, "Reference"] = import_file_with_all_columns.loc[mask2, "Pick/Ref #"]
 
         # mask3 = import_file_with_all_columns["Trailer"].fillna("").astype(str).str.upper().str.startswith("SN")
         # mask3 = import_file_with_all_columns["Trailer"].astype(str).str[:2] == "SN"
@@ -124,7 +124,9 @@ class Import_File():
         # )
 
         import_file_with_all_columns["Trailer"] = import_file_with_all_columns["Trailer"].astype(str).str.strip()
+        # import_file_with_all_columns["Trailer"] = import_file_with_all_columns["Trailer"].astype(str).str.strip()
 
+        import_file_with_all_columns["Pick/Ref #"] = import_file_with_all_columns["Pick/Ref #"].astype(str).str.strip()
 
         # import_file_with_all_columns.loc[
         #     import_file_with_all_columns["Trailer"].str.upper().str.startswith("SN"),
@@ -137,9 +139,16 @@ class Import_File():
         # Perform the replacement, which will work without issues
         import_file_with_all_columns.loc[mask4, "Trailer"] = None
 
+        mask6 = import_file_with_all_columns["Pick/Ref #"].str.upper().str.startswith("SN", na=False)
+
+        # Perform the replacement, which will work without issues
+        import_file_with_all_columns.loc[mask6, "Pick/Ref #"] = None
+
+
         import_file_with_all_columns['Trailer'] = import_file_with_all_columns['Trailer'].replace('nan', None)
         import_file_with_all_columns['Trailer'] = import_file_with_all_columns['Trailer'].replace('', None)
-
+        import_file_with_all_columns['Pick/Ref #'] = import_file_with_all_columns['Pick/Ref #'].replace('nan', None)
+        import_file_with_all_columns['Pick/Ref #'] = import_file_with_all_columns['Pick/Ref #'].replace('', None)
         # mask3 = import_file_with_all_columns["Trailer"].astype(str) == ""
         # import_file_with_all_columns.loc[mask3, "Trailer"] = None
 
@@ -183,6 +192,7 @@ class Import_File():
             "MR Status",
             "Reference",
             "Carrier",
+            "Pick/Ref #",
             "MR Date",
             "MR Earliest Time",
             "Mr Latest Time",
