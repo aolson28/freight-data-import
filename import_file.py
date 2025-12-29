@@ -23,7 +23,7 @@ class Import_File():
                 "Control #": "Control",                
                 "Release": "Reference",
                 "Trailer #": "Trailer",
-                " Rate": "Freight Rate", #Yes, there is supposed to be a space before 'Rate'
+                "Rate": "Freight Rate", #Yes, there is supposed to be a space before 'Rate' # The space was removed after format change - Aaron Olson 12/29/2025
                 "Carrier Code": "Carrier", 
                 "Pick Date": "MR Date",
                 "Del Date": "MS Appointment Date",
