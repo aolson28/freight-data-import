@@ -9,7 +9,7 @@ class Import_File():
 
     def clean_file(self):
         #Read and open the master logistics file
-        master_file = pd.read_excel(self.file, sheet_name="SMT LOAD LOG 2025")
+        master_file = pd.read_excel(self.file, sheet_name="SMT LOAD LOG 2026")
 
 
         
