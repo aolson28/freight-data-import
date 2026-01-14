@@ -166,21 +166,37 @@ class Import_File():
             import_file['Control'].notna() &
             (import_file['Control'].str.lower() != 'nan') &
             (import_file['Control'] != '')
-]       
+        ]       
 
 
 
         #Drop the empty rows for each of the listed columns
-        cleaned_import_file = import_file.dropna(subset=["Control", "Date", "MR Date"], how='any').copy()                                                       # -> datetime.time
+        #cleaned_import_file = import_file.dropna(subset=["Control", "Date", "MR Date"], how='any').copy()  # commented out for new filter logic - Aaron Olson 1/14/2026
         
+        # Start new filter logic - Aaron Olson 1/14/2026
+        cleaned_import_file = import_file.dropna(subset=["Control"], how='any').copy()
+
+        
+        mask5 = (
+            (cleaned_import_file["MR Date"].notna() & cleaned_import_file["Date"].notna()) |
+            (
+                (cleaned_import_file["MR Date"].isna() | cleaned_import_file["Date"].isna()) &
+                (cleaned_import_file["MR Status"].eq("Unscheduled"))   # <-- or use "MR Status" if that's the actual column
+            )
+        )
+
+        cleaned_import_file = cleaned_import_file[mask5].copy()
+
+        # End new filter logic - Aaron Olson 1/14/2026
+
         #Filled these columns with placeholder data
         
         cleaned_import_file.loc[:, "Mr Status"] = "Status MR"
         cleaned_import_file.loc[:, "MS Status"] = "Status MS"
         cleaned_import_file.loc[:, "MR Status"] = "Status"
 
-        mask5 = (cleaned_import_file["MR Date"].notna())
-        cleaned_import_file.loc[mask5, "MR Status"] = "Scheduled"
+        mask6 = cleaned_import_file[cleaned_import_file["MR Date"].notna()] # & cleaned_import_file["MR Status"] == "Unscheduled"
+        cleaned_import_file.loc[mask6, "MR Status"] = "Scheduled"
         #cleaned_import_file["Release"] = 'Release'
 
         for column in column_list:
