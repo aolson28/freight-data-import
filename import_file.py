@@ -182,7 +182,7 @@ class Import_File():
             (cleaned_import_file["MR Date"].notna() & cleaned_import_file["Date"].notna()) |
             (
                 (cleaned_import_file["MR Date"].isna() | cleaned_import_file["Date"].isna()) &
-                (cleaned_import_file["MR Status"].eq("Unscheduled"))   # <-- or use "MR Status" if that's the actual column
+                (cleaned_import_file["Status"].eq("Unscheduled"))   # <-- or use "MR Status" if that's the actual column
             )
         )
 
