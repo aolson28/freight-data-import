@@ -154,7 +154,7 @@ class Import_File():
         # import_file_with_all_columns.loc[mask3, "Trailer"] = None
 
         #Narrows it down to which columns we want to keep and clears out the columns that are empty. For pd.to_numeric, it clears out anything that is not a number
-        import_file = import_file_with_all_columns[["Control", "Date", "Trailer", "Freight Rate", "Carrier", "MR Date", "MS Appointment Date", "MS Appointment Earliest Time", "Reference", "Pick/Ref #","Status"]]
+        import_file = import_file_with_all_columns.loc[:, ["Control", "Date", "Trailer", "Freight Rate", "Carrier", "MR Date", "MS Appointment Date", "MS Appointment Earliest Time", "Reference", "Pick/Ref #","Status"]].copy()
         # import_file = import_file[pd.to_numeric(import_file['Control'], errors='coerce').notna()]
         
         
@@ -195,8 +195,10 @@ class Import_File():
         cleaned_import_file.loc[:, "MS Status"] = "Status MS"
         cleaned_import_file.loc[:, "MR Status"] = "Status"
 
-        mask6 = cleaned_import_file[cleaned_import_file["MR Date"].notna() & cleaned_import_file["MR Status"] != "Unscheduled"] # & cleaned_import_file["MR Status"] == "Unscheduled"
-        cleaned_import_file.loc[mask6, "MR Status"] = "Scheduled"
+        
+        mask_mr_scheduled = cleaned_import_file["MR Date"].notna() & cleaned_import_file["MR Status"].ne("Unscheduled")
+        cleaned_import_file.loc[mask_mr_scheduled, "MR Status"] = "Scheduled"
+
 
         # Added status of "Unscheduled"
         mask7 = cleaned_import_file[cleaned_import_file["MR Status"] == "Unscheduled"] # & cleaned_import_file["MR Status"] == "Unscheduled"
