@@ -154,7 +154,7 @@ class Import_File():
         # import_file_with_all_columns.loc[mask3, "Trailer"] = None
 
         #Narrows it down to which columns we want to keep and clears out the columns that are empty. For pd.to_numeric, it clears out anything that is not a number
-        import_file = import_file_with_all_columns.loc[["Control", "Date", "Trailer", "Freight Rate", "Carrier", "MR Date", "MS Appointment Date", "MS Appointment Earliest Time", "Reference", "Pick/Ref #"]]
+        import_file = import_file_with_all_columns[["Control", "Date", "Trailer", "Freight Rate", "Carrier", "MR Date", "MS Appointment Date", "MS Appointment Earliest Time", "Reference", "Pick/Ref #"]]
         # import_file = import_file[pd.to_numeric(import_file['Control'], errors='coerce').notna()]
         
         
@@ -166,43 +166,21 @@ class Import_File():
             import_file['Control'].notna() &
             (import_file['Control'].str.lower() != 'nan') &
             (import_file['Control'] != '')
-        ]       
+]       
 
 
 
         #Drop the empty rows for each of the listed columns
-        #cleaned_import_file = import_file.dropna(subset=["Control", "Date", "MR Date"], how='any').copy()  # commented out for new filter logic - Aaron Olson 1/14/2026
+        cleaned_import_file = import_file.dropna(subset=["Control", "Date", "MR Date"], how='any').copy()                                                       # -> datetime.time
         
-        # Start new filter logic - Aaron Olson 1/14/2026
-        cleaned_import_file = import_file.dropna(subset=["Control"], how='any').copy()
-
-        
-        mask5 = (
-            (cleaned_import_file["MR Date"].notna() & cleaned_import_file["Date"].notna()) |
-            (
-                (cleaned_import_file["MR Date"].isna() | cleaned_import_file["Date"].isna()) &
-                (cleaned_import_file["Status"].eq("Unscheduled"))   # <-- or use "MR Status" if that's the actual column
-            )
-        )
-
-        cleaned_import_file = cleaned_import_file[mask5].copy()
-
-        # End new filter logic - Aaron Olson 1/14/2026
-
         #Filled these columns with placeholder data
         
         cleaned_import_file.loc[:, "Mr Status"] = "Status MR"
         cleaned_import_file.loc[:, "MS Status"] = "Status MS"
         cleaned_import_file.loc[:, "MR Status"] = "Status"
 
-        
-        mask_mr_scheduled = cleaned_import_file["MR Date"].notna() & cleaned_import_file["MR Status"].ne("Unscheduled")
-        cleaned_import_file.loc[mask_mr_scheduled, "MR Status"] = "Scheduled"
-
-
-        # Added status of "Unscheduled"
-        mask7 = cleaned_import_file[cleaned_import_file["MR Status"] == "Unscheduled"] # & cleaned_import_file["MR Status"] == "Unscheduled"
-        cleaned_import_file.loc[mask7, "MR Status"] = "Unscheduled"
+        mask5 = (cleaned_import_file["MR Date"].notna())
+        cleaned_import_file.loc[mask5, "MR Status"] = "Scheduled"
         #cleaned_import_file["Release"] = 'Release'
 
         for column in column_list:
@@ -233,8 +211,7 @@ class Import_File():
             "MS Scheduled Shipment",
             "MS Appointment Date",
             "MS Appointment Earliest Time",
-            "MS Appointment Latest Time",
-            "Status"
+            "MS Appointment Latest Time"
         ]
         #Set the desired order
         cleaned_import_file = cleaned_import_file[desired_column_order]
@@ -257,7 +234,7 @@ class Import_File():
         cleaned_import_file["Date"] = cleaned_import_file['Date'].dt.strftime('%m/%d/%Y')
         cleaned_import_file["MR Date"] = cleaned_import_file['MR Date'].dt.strftime('%m/%d/%Y')
         cleaned_import_file["MS Appointment Date"] = cleaned_import_file['MS Appointment Date'].dt.strftime('%m/%d/%Y')
-        cleaned_import_file = cleaned_import_file.drop(columns=["Status"])
+
         # Ensure consistent types for all object columns
         for col in cleaned_import_file.select_dtypes(include=['object']).columns:
             cleaned_import_file[col] = cleaned_import_file[col].astype(str)
