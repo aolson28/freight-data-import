@@ -43,7 +43,8 @@ class Import_File():
             "MS Released",
             "MS Ready",
             "MS Scheduled Shipment",
-            "MS Appointment Latest Time"
+            "MS Appointment Latest Time",
+            "Status"
         ]
         
         #Makes Date = MR Date and cleans it of things like "ASAP" and deletes the time from the date
@@ -154,7 +155,7 @@ class Import_File():
         # import_file_with_all_columns.loc[mask3, "Trailer"] = None
 
         #Narrows it down to which columns we want to keep and clears out the columns that are empty. For pd.to_numeric, it clears out anything that is not a number
-        import_file = import_file_with_all_columns[["Control", "Date", "Trailer", "Freight Rate", "Carrier", "MR Date", "MS Appointment Date", "MS Appointment Earliest Time", "Reference", "Pick/Ref #"]]
+        import_file = import_file_with_all_columns[["Control", "Date", "Trailer", "Freight Rate", "Carrier", "MR Date", "MS Appointment Date", "MS Appointment Earliest Time", "Reference", "Pick/Ref #","Status"]]
         # import_file = import_file[pd.to_numeric(import_file['Control'], errors='coerce').notna()]
         
         
@@ -195,8 +196,12 @@ class Import_File():
         cleaned_import_file.loc[:, "MS Status"] = "Status MS"
         cleaned_import_file.loc[:, "MR Status"] = "Status"
 
-        mask6 = cleaned_import_file[cleaned_import_file["MR Date"].notna() & cleaned_import_file["MR Status"] == "Unscheduled"] # & cleaned_import_file["MR Status"] == "Unscheduled"
+        mask6 = cleaned_import_file[cleaned_import_file["MR Date"].notna() & cleaned_import_file["MR Status"] != "Unscheduled"] # & cleaned_import_file["MR Status"] == "Unscheduled"
         cleaned_import_file.loc[mask6, "MR Status"] = "Scheduled"
+
+        # Added status of "Unscheduled"
+        mask7 = cleaned_import_file[cleaned_import_file["MR Status"] == "Unscheduled"] # & cleaned_import_file["MR Status"] == "Unscheduled"
+        cleaned_import_file.loc[mask7, "MR Status"] = "Unscheduled"
         #cleaned_import_file["Release"] = 'Release'
 
         for column in column_list:
@@ -250,7 +255,7 @@ class Import_File():
         cleaned_import_file["Date"] = cleaned_import_file['Date'].dt.strftime('%m/%d/%Y')
         cleaned_import_file["MR Date"] = cleaned_import_file['MR Date'].dt.strftime('%m/%d/%Y')
         cleaned_import_file["MS Appointment Date"] = cleaned_import_file['MS Appointment Date'].dt.strftime('%m/%d/%Y')
-
+        cleaned_import_file = cleaned_import_file.drop(columns=["Status"])
         # Ensure consistent types for all object columns
         for col in cleaned_import_file.select_dtypes(include=['object']).columns:
             cleaned_import_file[col] = cleaned_import_file[col].astype(str)
