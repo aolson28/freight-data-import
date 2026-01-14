@@ -43,8 +43,7 @@ class Import_File():
             "MS Released",
             "MS Ready",
             "MS Scheduled Shipment",
-            "MS Appointment Latest Time",
-            "Status"
+            "MS Appointment Latest Time"
         ]
         
         #Makes Date = MR Date and cleans it of things like "ASAP" and deletes the time from the date
