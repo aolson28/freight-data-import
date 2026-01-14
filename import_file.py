@@ -232,7 +232,8 @@ class Import_File():
             "MS Scheduled Shipment",
             "MS Appointment Date",
             "MS Appointment Earliest Time",
-            "MS Appointment Latest Time"
+            "MS Appointment Latest Time",
+            "Status"
         ]
         #Set the desired order
         cleaned_import_file = cleaned_import_file[desired_column_order]
