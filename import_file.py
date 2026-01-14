@@ -171,7 +171,15 @@ class Import_File():
 
 
         #Drop the empty rows for each of the listed columns
-        cleaned_import_file = import_file.dropna(subset=["Control", "Date", "MR Date"], how='any').copy()                                                       # -> datetime.time
+        cleaned_import_file = import_file.dropna(subset=["Control"], how='any').copy()
+        
+        cleaned_import_file = cleaned_import_file[(
+            (cleaned_import_file["MR Date"].notna() & cleaned_import_file["Date"].notna()) |
+            (
+                (cleaned_import_file["MR Date"].isna() | cleaned_import_file["Date"].isna()) &
+                (cleaned_import_file["Status"].eq("Unscheduled"))
+            )
+        )]
         
         #Filled these columns with placeholder data
         
