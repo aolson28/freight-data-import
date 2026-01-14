@@ -192,8 +192,8 @@ class Import_File():
         #cleaned_import_file["Release"] = 'Release'
 
 
-        mask7 = cleaned_import_file[cleaned_import_file["Status"] == "Unscheduled"] # & cleaned_import_file["MR Status"] == "Unscheduled"
-        cleaned_import_file.loc[mask7, "Status"] = "Unscheduled"
+        # mask7 = cleaned_import_file[cleaned_import_file["Status"] == "Unscheduled"] # & cleaned_import_file["Status"] == "Unscheduled"
+        # cleaned_import_file.loc[mask7, "MR Status"] = "Unscheduled"
 
         for column in column_list:
             cleaned_import_file[column] = None
