@@ -85,6 +85,11 @@ class Import_File():
             (
                 (import_file_with_all_columns["Consumer"].str.contains("kaiser", case=False, na=False)) &
                 (import_file_with_all_columns["Mill PO#"].astype(str).str[:2] == "52")
+            )            
+            |
+            (
+                (import_file_with_all_columns["Consumer"] == "SCEPTER") &
+                (import_file_with_all_columns["Mill PO#"].astype(str).str[:2] == "67")
             )
         )
         # st.write("count of masked items",mask.sum())
@@ -109,6 +114,11 @@ class Import_File():
             (
                 (import_file_with_all_columns["Consumer"].str.contains("kaiser", case=False, na=False)) &
                 (import_file_with_all_columns["Pick/Ref #"].astype(str).str[:2] == "52")
+            )
+            |
+            (
+                (import_file_with_all_columns["Consumer"] == "SCEPTER") &
+                (import_file_with_all_columns["Pick/Ref #"].astype(str).str[:2] == "67")
             )
         )
         # st.write("count of masked items",mask.sum())
