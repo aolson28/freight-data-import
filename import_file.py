@@ -245,7 +245,7 @@ class Import_File():
 
         #Only take the dates in the 'Dates' column from the previous 4 days and beyond.
         import_file_with_all_columns["Date"] = pd.to_datetime(import_file_with_all_columns["Date"], errors="coerce")
-        cutoff_past = pd.Timestamp.today().normalize() - pd.Timedelta(days=4)
+        cutoff_past = pd.Timestamp.today().normalize() - pd.Timedelta(days=7)
         cutoff_future = pd.Timedelta(days=21) + pd.Timestamp.today().normalize()
         correct_dates   = (cleaned_import_file['Date'] >= cutoff_past) & (cleaned_import_file['Date'] <= cutoff_future)
         cleaned_import_file = cleaned_import_file[correct_dates]
