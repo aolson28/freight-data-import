@@ -197,10 +197,12 @@ class Import_File():
         cleaned_import_file.loc[:, "MS Status"] = "Status MS"
         cleaned_import_file.loc[:, "MR Status"] = "Status"
 
-        mask5 = (cleaned_import_file["MR Date"].notna() & cleaned_import_file["Status"].ne("Unscheduled"))
+        mask5 = (cleaned_import_file["MR Date"].notna() & cleaned_import_file["Status"].ne("Unscheduled") & cleaned_import_file["Status"].ne("Canceled"))
         cleaned_import_file.loc[mask5, "MR Status"] = "Scheduled"
         #cleaned_import_file["Release"] = 'Release'
 
+        mask6 = (cleaned_import_file["Status"].eq("Canceled"))
+        cleaned_import_file.loc[mask6, "MR Status"] = "Scheduled"
 
         mask7 = (cleaned_import_file["Status"] == "Unscheduled") # & cleaned_import_file["Status"] == "Unscheduled"
         cleaned_import_file.loc[mask7, "MR Status"] = "Unscheduled"
