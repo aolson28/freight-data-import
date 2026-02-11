@@ -202,7 +202,7 @@ class Import_File():
         #cleaned_import_file["Release"] = 'Release'
 
         mask6 = (cleaned_import_file["Status"].eq("Canceled"))
-        cleaned_import_file.loc[mask6, "MR Status"] = "Scheduled"
+        cleaned_import_file.loc[mask6, "MR Status"] = "Canceled"
 
         mask7 = (cleaned_import_file["Status"] == "Unscheduled") # & cleaned_import_file["Status"] == "Unscheduled"
         cleaned_import_file.loc[mask7, "MR Status"] = "Unscheduled"
