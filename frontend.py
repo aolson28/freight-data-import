@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import io
+import traceback
 from import_file import Import_File
 
 class Frontend:
@@ -22,22 +23,54 @@ class Frontend:
                 st.error("Unsupported file format!")
                 return
 
+            with st.expander("🔎 Column diagnostics (raw file)"):
+                diag_rows = []
+                for col in df.columns:
+                    sample_types = df[col].dropna().apply(type).value_counts().to_dict()
+                    diag_rows.append({
+                        "Column": col,
+                        "dtype": str(df[col].dtype),
+                        "Null count": int(df[col].isna().sum()),
+                        "Python types in column": str({t.__name__: n for t, n in sample_types.items()}),
+                    })
+                st.dataframe(pd.DataFrame(diag_rows))
+
             st.subheader("🔍 Preview of Original Data")
             preview_df = df.copy()
             for col in preview_df.columns:
                 if preview_df[col].dtype == object:
                     preview_df[col] = preview_df[col].apply(lambda x: str(x) if pd.notna(x) else None)
-            st.write(preview_df)
+            try:
+                st.write(preview_df)
+            except Exception:
+                st.error("Could not render raw preview. See diagnostics above.")
+                st.code(traceback.format_exc())
 
             try:
                 processor = Import_File(uploaded_file)
                 cleaned_import_file = processor.clean_file()
             except Exception as e:
                 st.error(f"An error occurred: {e}")
+                st.code(traceback.format_exc())
                 return
 
             st.subheader("✅ Cleaned Data (Rows with empty cells removed)")
-            st.write(cleaned_import_file)
+            try:
+                st.write(cleaned_import_file)
+            except Exception:
+                st.error("Could not render cleaned data.")
+                st.code(traceback.format_exc())
+                with st.expander("🔎 Column diagnostics (cleaned file)"):
+                    diag_rows = []
+                    for col in cleaned_import_file.columns:
+                        sample_types = cleaned_import_file[col].dropna().apply(type).value_counts().to_dict()
+                        diag_rows.append({
+                            "Column": col,
+                            "dtype": str(cleaned_import_file[col].dtype),
+                            "Null count": int(cleaned_import_file[col].isna().sum()),
+                            "Python types in column": str({t.__name__: n for t, n in sample_types.items()}),
+                        })
+                    st.dataframe(pd.DataFrame(diag_rows))
 
             towrite = io.BytesIO()
             if file_type == "csv":
