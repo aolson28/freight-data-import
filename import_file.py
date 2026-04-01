@@ -260,9 +260,8 @@ class Import_File():
         cleaned_import_file["MS Appointment Date"] = cleaned_import_file['MS Appointment Date'].dt.strftime('%m/%d/%Y')
 
         # Ensure consistent types for all object columns
-        for col in cleaned_import_file.select_dtypes(include=['object']).columns:
-            cleaned_import_file[col] = cleaned_import_file[col].astype(str)
-            cleaned_import_file[col] = cleaned_import_file[col].replace('nan', None)
-            cleaned_import_file[col] = cleaned_import_file[col].replace('None', None)
+        for col in cleaned_import_file.columns:
+            if cleaned_import_file[col].dtype == object:
+                cleaned_import_file[col] = cleaned_import_file[col].apply(lambda x: str(x) if pd.notna(x) else None)
 
         return cleaned_import_file

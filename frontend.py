@@ -24,8 +24,9 @@ class Frontend:
 
             st.subheader("🔍 Preview of Original Data")
             preview_df = df.copy()
-            for col in preview_df.select_dtypes(include=['object']).columns:
-                preview_df[col] = preview_df[col].astype(str)
+            for col in preview_df.columns:
+                if preview_df[col].dtype == object:
+                    preview_df[col] = preview_df[col].apply(lambda x: str(x) if pd.notna(x) else None)
             st.write(preview_df)
 
             try:
