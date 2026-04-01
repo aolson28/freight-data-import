@@ -23,7 +23,10 @@ class Frontend:
                 return
 
             st.subheader("🔍 Preview of Original Data")
-            st.write(df)
+            preview_df = df.copy()
+            for col in preview_df.select_dtypes(include=['object']).columns:
+                preview_df[col] = preview_df[col].astype(str)
+            st.write(preview_df)
 
             try:
                 processor = Import_File(uploaded_file)

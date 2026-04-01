@@ -265,8 +265,4 @@ class Import_File():
             cleaned_import_file[col] = cleaned_import_file[col].replace('nan', None)
             cleaned_import_file[col] = cleaned_import_file[col].replace('None', None)
 
-        cleaned_import_file["Origin"] = cleaned_import_file["Origin"].apply(
-            lambda x: str(x) if pd.notnull(x) else None
-        )
-
         return cleaned_import_file
