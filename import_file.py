@@ -93,7 +93,7 @@ class Import_File():
             )
         )
         # st.write("count of masked items",mask.sum())
-        import_file_with_all_columns.loc[mask1, "Reference"] = import_file_with_all_columns.loc[mask1, "Mill PO#"]
+        import_file_with_all_columns.loc[mask1, "Reference"] = import_file_with_all_columns.loc[mask1, "Mill PO#"].astype(str)
         # Ensure Trailer column is string or None
         # import_file_with_all_columns["Trailer"] = import_file_with_all_columns["Trailer"].apply(
         #     lambda x: str(x) if pd.notnull(x) else None
@@ -122,7 +122,7 @@ class Import_File():
             )
         )
         # st.write("count of masked items",mask.sum())
-        import_file_with_all_columns.loc[mask2, "Reference"] = import_file_with_all_columns.loc[mask2, "Pick/Ref #"]
+        import_file_with_all_columns.loc[mask2, "Reference"] = import_file_with_all_columns.loc[mask2, "Pick/Ref #"].astype(str)
 
         # mask3 = import_file_with_all_columns["Trailer"].fillna("").astype(str).str.upper().str.startswith("SN")
         # mask3 = import_file_with_all_columns["Trailer"].astype(str).str[:2] == "SN"
