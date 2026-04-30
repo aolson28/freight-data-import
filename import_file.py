@@ -69,7 +69,7 @@ class Import_File():
         mask1 = (
             (
                 (import_file_with_all_columns["Consumer"] == "ARCONIC") &
-                (import_file_with_all_columns["Mill PO#"].astype(str).str[0] == "6")
+                (import_file_with_all_columns["Mill PO#"].astype(str).str[:2] == "68")
             )
             |
             (
@@ -101,6 +101,11 @@ class Import_File():
 
         #Replace Reference if Consumer is ARCONIC
         mask2 = (
+            (
+                (import_file_with_all_columns["Consumer"] == "ARCONIC") &
+                (import_file_with_all_columns["Pick/Ref #"].astype(str).str[:2] == "68")
+            )
+            |
             (
                 (import_file_with_all_columns["Consumer"] == "OHA") &
                 (import_file_with_all_columns["Pick/Ref #"].astype(str).str[0] == "5")
